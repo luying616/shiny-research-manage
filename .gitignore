@@ -1,0 +1,27 @@
+# R and RStudio files
+.Rhistory
+.RData
+.Rproj.user
+.Ruserdata
+*.Rproj
+
+# Shiny app specific
+rsconnect/
+
+# Package files
+*.tar.gz
+*.zip
+
+# Temporary files
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Data files (can be uncommented if needed)
+# *.csv
+# *.xlsx
+# *.rds
+
+# Environment variables
+.Renviron
