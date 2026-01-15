@@ -1,0 +1,52 @@
+# Configuration File for Research Code Manager
+# 
+# This file contains configuration options that can be customized
+# Rename to config.R and modify as needed
+
+# Application Settings
+config <- list(
+  # Application title
+  app_title = "Research Code Manager",
+  
+  # Directory for storing uploaded files
+  data_dir = "research_code",
+  
+  # Maximum file size for upload (in MB)
+  max_file_size = 50,
+  
+  # Allowed file extensions
+  allowed_extensions = c(".R", ".py", ".ipynb", ".Rmd", ".sql", ".sh", 
+                         ".txt", ".md", ".html", ".css", ".js"),
+  
+  # Number of lines to show in file preview
+  preview_lines = 100,
+  
+  # Enable/disable metadata tracking
+  enable_metadata = TRUE,
+  
+  # Metadata file name
+  metadata_file = "metadata.txt",
+  
+  # Enable/disable file categorization
+  enable_categories = TRUE,
+  
+  # Default categories (users can add their own)
+  default_categories = c(
+    "data-analysis",
+    "data-preprocessing", 
+    "modeling",
+    "visualization",
+    "database",
+    "utilities"
+  ),
+  
+  # Application theme color
+  theme_color = "primary",  # Options: primary, success, info, warning, danger
+  
+  # Enable debug mode
+  debug_mode = FALSE
+)
+
+# To use this configuration in app.R:
+# source("config.R")
+# Then access settings like: config$max_file_size

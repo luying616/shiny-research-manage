@@ -1,0 +1,16 @@
+Package: ResearchCodeManager
+Type: Shiny
+Title: Research Code Management System
+Version: 1.0.0
+Author: Research Team
+Maintainer: Research Team <research@example.com>
+Description: A Shiny application for managing and organizing research code files.
+    Provides an intuitive interface for uploading, viewing, and managing 
+    code files across various programming languages.
+License: MIT
+Depends:
+    R (>= 4.0.0)
+Imports:
+    shiny (>= 1.7.0),
+    shinydashboard (>= 0.7.0),
+    DT (>= 0.20)
