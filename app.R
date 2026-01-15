@@ -122,11 +122,14 @@ ui <- dashboardPage(
 # Server Logic
 server <- function(input, output, session) {
   
-  # Reactive value to store file list
-  fileList <- reactiveVal(list.files("research_code", full.names = FALSE))
+  # Reactive value to trigger file list updates
+  fileListTrigger <- reactiveVal(0)
   
-  # Function to get file info
-  getFileInfo <- function() {
+  # Reactive function to get file info
+  getFileInfo <- reactive({
+    # Depend on the trigger to refresh
+    fileListTrigger()
+    
     files <- list.files("research_code", full.names = TRUE)
     if (length(files) == 0) {
       return(data.frame(
@@ -144,7 +147,7 @@ server <- function(input, output, session) {
       Modified = as.character(info$mtime),
       Type = tools::file_ext(basename(files))
     )
-  }
+  })
   
   # Display file table
   output$fileTable <- renderDT({
@@ -207,9 +210,12 @@ server <- function(input, output, session) {
   
   # Refresh button
   observeEvent(input$refreshBtn, {
-    fileList(list.files("research_code", full.names = FALSE))
+    fileListTrigger(fileListTrigger() + 1)
     showNotification("File list refreshed", type = "message")
   })
+  
+  # Reactive value for upload status
+  uploadStatus <- reactiveVal("")
   
   # Upload files
   observeEvent(input$uploadBtn, {
@@ -218,39 +224,42 @@ server <- function(input, output, session) {
       return()
     }
     
-    output$uploadStatus <- renderText({
-      status <- character()
+    status <- character()
+    
+    for (i in 1:nrow(input$fileUpload)) {
+      file_name <- input$fileUpload$name[i]
+      file_path <- input$fileUpload$datapath[i]
+      dest_path <- file.path("research_code", file_name)
       
-      for (i in 1:nrow(input$fileUpload)) {
-        file_name <- input$fileUpload$name[i]
-        file_path <- input$fileUpload$datapath[i]
-        dest_path <- file.path("research_code", file_name)
-        
-        tryCatch({
-          file.copy(file_path, dest_path, overwrite = TRUE)
-          status <- c(status, paste("✓", file_name, "uploaded successfully"))
-        }, error = function(e) {
-          status <- c(status, paste("✗", file_name, "failed:", e$message))
-        })
-      }
-      
-      # Add metadata if provided
-      if (nchar(input$categoryInput) > 0 || nchar(input$descriptionInput) > 0) {
-        metadata_file <- file.path("research_code", "metadata.txt")
-        metadata <- sprintf(
-          "\n--- Upload: %s ---\nFiles: %s\nCategory: %s\nDescription: %s\n",
-          Sys.time(),
-          paste(input$fileUpload$name, collapse = ", "),
-          input$categoryInput,
-          input$descriptionInput
-        )
-        cat(metadata, file = metadata_file, append = TRUE)
-      }
-      
-      fileList(list.files("research_code", full.names = FALSE))
-      showNotification("Upload completed", type = "message")
-      paste(status, collapse = "\n")
-    })
+      tryCatch({
+        file.copy(file_path, dest_path, overwrite = TRUE)
+        status <- c(status, paste("✓", file_name, "uploaded successfully"))
+      }, error = function(e) {
+        status <- c(status, paste("✗", file_name, "failed:", e$message))
+      })
+    }
+    
+    # Add metadata if provided
+    if (nchar(input$categoryInput) > 0 || nchar(input$descriptionInput) > 0) {
+      metadata_file <- file.path("research_code", "metadata.txt")
+      metadata <- sprintf(
+        "\n--- Upload: %s ---\nFiles: %s\nCategory: %s\nDescription: %s\n",
+        Sys.time(),
+        paste(input$fileUpload$name, collapse = ", "),
+        input$categoryInput,
+        input$descriptionInput
+      )
+      cat(metadata, file = metadata_file, append = TRUE)
+    }
+    
+    fileListTrigger(fileListTrigger() + 1)
+    uploadStatus(paste(status, collapse = "\n"))
+    showNotification("Upload completed", type = "message")
+  })
+  
+  # Render upload status
+  output$uploadStatus <- renderText({
+    uploadStatus()
   })
   
   # Delete selected file
@@ -297,7 +306,7 @@ server <- function(input, output, session) {
     
     if (file.exists(file_path)) {
       file.remove(file_path)
-      fileList(list.files("research_code", full.names = FALSE))
+      fileListTrigger(fileListTrigger() + 1)
       showNotification(paste("Deleted:", selected_file), type = "message")
       removeModal()
     }
