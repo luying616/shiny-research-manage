@@ -25,8 +25,9 @@ def load_and_clean_data(file_path):
     # Remove duplicates
     df = df.drop_duplicates()
     
-    # Handle missing values
-    df = df.fillna(df.mean())
+    # Handle missing values for numeric columns only
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    df[numeric_cols] = df[numeric_cols].fillna(df[numeric_cols].mean())
     
     return df
 

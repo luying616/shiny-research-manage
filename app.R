@@ -150,7 +150,7 @@ server <- function(input, output, session) {
   output$fileTable <- renderDT({
     datatable(
       getFileInfo(),
-      selection = 'single',
+      selection = 'single',  # Single selection for preview, delete, and download
       options = list(
         pageLength = 10,
         searching = TRUE,
@@ -173,17 +173,32 @@ server <- function(input, output, session) {
     
     selected_file <- fileData$Name[input$fileTable_rows_selected]
     file_path <- file.path("research_code", selected_file)
+    file_ext <- tolower(tools::file_ext(selected_file))
+    
+    # Define text-based file extensions
+    text_extensions <- c("r", "py", "sql", "sh", "txt", "md", "rmd", 
+                        "html", "css", "js", "json", "xml", "yaml", "yml")
     
     if (file.exists(file_path)) {
+      # Check if file is a text file
+      if (!file_ext %in% text_extensions) {
+        return(paste("Preview not available for", toupper(file_ext), 
+                    "files. Please download to view."))
+      }
+      
       tryCatch({
         # Read first 100 lines for preview
         content <- readLines(file_path, n = 100, warn = FALSE)
+        if (length(content) == 0) {
+          return("(Empty file)")
+        }
         if (length(content) == 100) {
           content <- c(content, "... (preview limited to 100 lines)")
         }
         paste(content, collapse = "\n")
       }, error = function(e) {
-        paste("Error reading file:", e$message)
+        paste("Error reading file:", e$message, 
+              "\nThis may be a binary file. Please download to view.")
       })
     } else {
       "File not found."
@@ -252,9 +267,39 @@ server <- function(input, output, session) {
     file_path <- file.path("research_code", selected_file)
     
     if (file.exists(file_path)) {
+      # Show confirmation modal
+      showModal(modalDialog(
+        title = "Confirm Deletion",
+        sprintf("Are you sure you want to delete '%s'? This action cannot be undone.", selected_file),
+        footer = tagList(
+          modalButton("Cancel"),
+          actionButton("confirmDelete", "Delete", class = "btn-danger")
+        )
+      ))
+    }
+  })
+  
+  # Confirm deletion
+  observeEvent(input$confirmDelete, {
+    if (is.null(input$fileTable_rows_selected)) {
+      removeModal()
+      return()
+    }
+    
+    fileData <- getFileInfo()
+    if (nrow(fileData) == 0) {
+      removeModal()
+      return()
+    }
+    
+    selected_file <- fileData$Name[input$fileTable_rows_selected]
+    file_path <- file.path("research_code", selected_file)
+    
+    if (file.exists(file_path)) {
       file.remove(file_path)
       fileList(list.files("research_code", full.names = FALSE))
       showNotification(paste("Deleted:", selected_file), type = "message")
+      removeModal()
     }
   })
   
