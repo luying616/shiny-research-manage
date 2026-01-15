@@ -1,0 +1,89 @@
+# R History and Session Data
+.Rhistory
+.RData
+.Rapp.history
+
+# R Studio files
+.Rproj.user/
+*.Rproj
+
+# R Environment Variables
+.Renviron
+.env
+
+# Temporary files
+*~
+*.swp
+*.swo
+
+# Output files
+*.log
+*.out
+
+# Exported data files
+*.csv
+*.xlsx
+*_export_*.csv
+*_export_*.xlsx
+
+# Generated reports
+*.html
+*.pdf
+*.docx
+reports_*.html
+reports_*.pdf
+reports_*.docx
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Packrat
+packrat/lib*/
+packrat/src/
+
+# knitr and R markdown default cache directories
+*_cache/
+/cache/
+
+# Shiny token
+rsconnect/
+
+# OAuth2 token
+.httr-oauth
+
+# Node modules (if using any)
+node_modules/
+
+# Python (if using reticulate)
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Database files (if using local SQLite for testing)
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+
+# Temporary directories
+tmp/
+temp/

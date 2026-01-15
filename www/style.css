@@ -1,0 +1,707 @@
+/* ==================== 科研项目管理系统样式表 ====================
+ * 文件说明：定义系统的全局样式和组件样式
+ * 创建时间：2026-01-15
+ * 版本：1.0.0
+ * 
+ * 样式结构：
+ * 1. 全局样式和重置
+ * 2. 顶部导航栏样式
+ * 3. 主内容区域样式
+ * 4. 表格样式
+ * 5. 表单和输入框样式
+ * 6. 按钮样式
+ * 7. 状态标签样式
+ * 8. 卡片和面板样式
+ * 9. 响应式设计
+ * 10. 辅助类
+ * ================================================================ */
+
+/* ==================== 1. 全局样式和重置 ==================== */
+
+/* 全局字体和基础样式 */
+body {
+  font-family: 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
+  background-color: #f4f6f9;
+  line-height: 1.6;
+}
+
+/* 清除默认边距 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* 主容器样式 */
+.wrapper {
+  min-height: 100vh;
+}
+
+/* ==================== 2. 顶部导航栏样式 ==================== */
+
+/* 顶部导航栏容器 */
+.main-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-bottom: 3px solid #5568d3;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo 和标题区域 */
+.logo-title-container {
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  color: white;
+}
+
+/* Logo 图片样式 */
+.app-logo {
+  height: 40px;
+  width: auto;
+  margin-right: 15px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* 应用标题样式 */
+.app-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  letter-spacing: 1px;
+}
+
+/* 导航栏右侧用户信息 */
+.navbar-custom-menu {
+  float: right;
+}
+
+.navbar-custom-menu .user-panel {
+  color: white;
+  padding: 10px 15px;
+}
+
+/* ==================== 3. 主内容区域样式 ==================== */
+
+/* 内容包装器 */
+.content-wrapper {
+  background-color: #f4f6f9;
+  min-height: calc(100vh - 50px);
+  padding: 20px;
+}
+
+/* 页面标题 */
+.page-title {
+  font-size: 24px;
+  font-weight: bold;
+  color: #2c3e50;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #667eea;
+}
+
+/* 标签页容器 */
+.nav-tabs-custom {
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  margin-bottom: 20px;
+}
+
+/* 标签页导航 */
+.nav-tabs-custom > .nav-tabs > li.active > a {
+  border-top-color: #667eea;
+  color: #667eea;
+  font-weight: bold;
+}
+
+.nav-tabs-custom > .nav-tabs > li > a {
+  color: #555;
+  transition: all 0.3s ease;
+}
+
+.nav-tabs-custom > .nav-tabs > li > a:hover {
+  background-color: #f8f9fa;
+  color: #667eea;
+}
+
+/* ==================== 4. 表格样式 ==================== */
+
+/* DataTable 表格容器 */
+.dataTables_wrapper {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+/* 表格样式 */
+table.dataTable {
+  width: 100% !important;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+/* 表格头部 */
+table.dataTable thead th {
+  background: linear-gradient(to bottom, #f8f9fa 0%, #e9ecef 100%);
+  color: #495057;
+  font-weight: bold;
+  padding: 12px 10px;
+  border-bottom: 2px solid #dee2e6;
+  text-align: left;
+}
+
+/* 表格行样式 */
+table.dataTable tbody tr {
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease;
+}
+
+table.dataTable tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* 表格单元格 */
+table.dataTable tbody td {
+  padding: 10px;
+  vertical-align: middle;
+}
+
+/* 表格斑马纹 */
+table.dataTable.stripe tbody tr.odd,
+table.dataTable.display tbody tr.odd {
+  background-color: #ffffff;
+}
+
+table.dataTable.stripe tbody tr.even,
+table.dataTable.display tbody tr.even {
+  background-color: #f9f9f9;
+}
+
+/* 分页按钮样式 */
+.dataTables_paginate .paginate_button {
+  padding: 5px 10px;
+  margin: 0 2px;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.dataTables_paginate .paginate_button:hover {
+  background: #667eea;
+  color: white !important;
+  border-color: #667eea;
+}
+
+.dataTables_paginate .paginate_button.current {
+  background: #667eea;
+  color: white !important;
+  border-color: #667eea;
+}
+
+/* ==================== 5. 表单和输入框样式 ==================== */
+
+/* 表单组样式 */
+.form-group {
+  margin-bottom: 20px;
+}
+
+/* 表单标签 */
+.form-group label {
+  font-weight: bold;
+  color: #495057;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+/* 必填字段标记 */
+.required::after {
+  content: " *";
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+/* 输入框样式 */
+.form-control {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+  outline: none;
+}
+
+/* 文本域样式 */
+textarea.form-control {
+  min-height: 100px;
+  resize: vertical;
+}
+
+/* 选择框样式 */
+.selectize-input {
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 6px 10px;
+  min-height: 38px;
+}
+
+.selectize-input:focus,
+.selectize-input.focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* 日期选择器样式 */
+.datepicker {
+  border-radius: 4px;
+}
+
+/* ==================== 6. 按钮样式 ==================== */
+
+/* 基础按钮样式 */
+.btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: none;
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+/* 主要按钮 - 紫色主题 */
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 5px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 成功按钮 - 绿色 */
+.btn-success {
+  background-color: #28a745;
+  color: white;
+  box-shadow: 0 2px 5px rgba(40, 167, 69, 0.3);
+}
+
+.btn-success:hover {
+  background-color: #218838;
+  box-shadow: 0 4px 8px rgba(40, 167, 69, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 信息按钮 - 蓝色 */
+.btn-info {
+  background-color: #17a2b8;
+  color: white;
+  box-shadow: 0 2px 5px rgba(23, 162, 184, 0.3);
+}
+
+.btn-info:hover {
+  background-color: #138496;
+  box-shadow: 0 4px 8px rgba(23, 162, 184, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 警告按钮 - 橙色 */
+.btn-warning {
+  background-color: #ffc107;
+  color: #212529;
+  box-shadow: 0 2px 5px rgba(255, 193, 7, 0.3);
+}
+
+.btn-warning:hover {
+  background-color: #e0a800;
+  box-shadow: 0 4px 8px rgba(255, 193, 7, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 危险按钮 - 红色 */
+.btn-danger {
+  background-color: #dc3545;
+  color: white;
+  box-shadow: 0 2px 5px rgba(220, 53, 69, 0.3);
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 默认按钮 - 灰色 */
+.btn-default {
+  background-color: #6c757d;
+  color: white;
+  box-shadow: 0 2px 5px rgba(108, 117, 125, 0.3);
+}
+
+.btn-default:hover {
+  background-color: #5a6268;
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.4);
+  transform: translateY(-1px);
+}
+
+/* 小按钮 */
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+/* 大按钮 */
+.btn-lg {
+  padding: 12px 24px;
+  font-size: 16px;
+}
+
+/* 按钮禁用状态 */
+.btn:disabled,
+.btn.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ==================== 7. 状态标签样式 ==================== */
+
+/* 基础标签样式 */
+.label,
+.badge {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 12px;
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* 状态标签 - 规划中（蓝色） */
+.status-planning {
+  background-color: #3498db;
+  color: white;
+}
+
+/* 状态标签 - 进行中（绿色） */
+.status-in-progress {
+  background-color: #2ecc71;
+  color: white;
+}
+
+/* 状态标签 - 暂停（橙色） */
+.status-on-hold {
+  background-color: #f39c12;
+  color: white;
+}
+
+/* 状态标签 - 已完成（灰色） */
+.status-completed {
+  background-color: #95a5a6;
+  color: white;
+}
+
+/* 状态标签 - 已取消（红色） */
+.status-cancelled {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* 优先级标签 - 高（红色） */
+.priority-high {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* 优先级标签 - 中（橙色） */
+.priority-medium {
+  background-color: #f39c12;
+  color: white;
+}
+
+/* 优先级标签 - 低（绿色） */
+.priority-low {
+  background-color: #2ecc71;
+  color: white;
+}
+
+/* ==================== 8. 卡片和面板样式 ==================== */
+
+/* 信息卡片 */
+.info-box {
+  background: white;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.info-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 信息卡片图标 */
+.info-box-icon {
+  display: inline-block;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 60px;
+  font-size: 30px;
+  color: white;
+  float: left;
+  margin-right: 15px;
+}
+
+/* 信息卡片内容 */
+.info-box-content {
+  margin-left: 75px;
+}
+
+.info-box-text {
+  font-size: 14px;
+  color: #777;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.info-box-number {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+  margin-top: 5px;
+}
+
+/* 面板样式 */
+.box {
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.box-header {
+  padding: 15px;
+  border-bottom: 1px solid #f0f0f0;
+  background: linear-gradient(to bottom, #fafafa 0%, #f5f5f5 100%);
+}
+
+.box-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+.box-body {
+  padding: 20px;
+}
+
+.box-footer {
+  padding: 15px;
+  border-top: 1px solid #f0f0f0;
+  background-color: #fafafa;
+}
+
+/* ==================== 9. 响应式设计 ==================== */
+
+/* 平板设备 */
+@media (max-width: 768px) {
+  .content-wrapper {
+    padding: 10px;
+  }
+  
+  .app-title {
+    font-size: 16px;
+  }
+  
+  .app-logo {
+    height: 30px;
+  }
+  
+  .info-box {
+    text-align: center;
+  }
+  
+  .info-box-icon {
+    float: none;
+    margin: 0 auto 10px;
+  }
+  
+  .info-box-content {
+    margin-left: 0;
+  }
+  
+  table.dataTable {
+    font-size: 12px;
+  }
+  
+  .btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+/* 手机设备 */
+@media (max-width: 480px) {
+  .logo-title-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .app-logo {
+    margin-right: 0;
+    margin-bottom: 5px;
+  }
+  
+  .page-title {
+    font-size: 20px;
+  }
+  
+  .info-box-number {
+    font-size: 24px;
+  }
+  
+  .box-body {
+    padding: 10px;
+  }
+}
+
+/* ==================== 10. 辅助类 ==================== */
+
+/* 文本对齐 */
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* 文本颜色 */
+.text-primary {
+  color: #667eea;
+}
+
+.text-success {
+  color: #28a745;
+}
+
+.text-info {
+  color: #17a2b8;
+}
+
+.text-warning {
+  color: #ffc107;
+}
+
+.text-danger {
+  color: #dc3545;
+}
+
+.text-muted {
+  color: #6c757d;
+}
+
+/* 边距辅助类 */
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-20 { margin-bottom: 20px; }
+.ml-10 { margin-left: 10px; }
+.mr-10 { margin-right: 10px; }
+
+/* 内边距辅助类 */
+.p-10 { padding: 10px; }
+.p-20 { padding: 20px; }
+
+/* 隐藏元素 */
+.hidden {
+  display: none;
+}
+
+/* 清除浮动 */
+.clearfix::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* 分隔线 */
+.divider {
+  height: 1px;
+  background-color: #e0e0e0;
+  margin: 20px 0;
+}
+
+/* 加载动画 */
+.loading-spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 提示框样式优化 */
+.shiny-notification {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  min-width: 250px;
+  padding: 15px 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  font-size: 14px;
+  z-index: 9999;
+}
+
+.shiny-notification-message {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.shiny-notification-warning {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.shiny-notification-error {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* ==================== 结束 ==================== */
