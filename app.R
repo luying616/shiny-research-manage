@@ -19,6 +19,7 @@ source("modules/project_code_generator.R")
 source("modules/dashboard_module.R")
 source("modules/project_module.R")
 source("modules/reports_module.R")
+source("modules/attachment_module.R") 
 
 log_info("所有模块加载完成")
 
@@ -30,12 +31,20 @@ ui <- dashboardPage(
   dashboardHeader(
     title = div(
       class = "logo-title-container",
-      # Logo图片（如果存在）
+      style = "display: flex; align-items: center; height: 100%; padding: 5px 0;",
+      # Logo图片
       if (file.exists("www/logo.png")) {
-        tags$img(src = "logo.png", class = "app-logo", alt = "Logo")
+        tags$img(
+          src = "logo.png",
+          style = "height: 40px; width: auto; margin-right: 15px; object-fit: contain;",
+          alt = "Logo"
+        )
       },
       # 应用标题
-      span(APP_NAME, class = "app-title")
+      span(
+        style = "font-size: 20px; font-weight: 600; color: #fff; white-space: nowrap;",
+        APP_NAME
+      )
     ),
     titleWidth = 350
   ),
@@ -95,11 +104,153 @@ ui <- dashboardPage(
       if (file.exists("www/logo_tab.png")) {
         tags$link(rel = "icon", type = "image/png", href = "logo_tab.png")
       },
-      # 自定义JavaScript（如果需要）
+      # 添加响应式CSS
+      tags$style(HTML("
+    @media (max-width: 768px) {
+      .logo-title-container img {
+        height: 30px !important;
+        margin-right: 10px !important;
+      }
+      .logo-title-container span {
+        font-size: 16px !important;
+      }
+    }
+  ")),
       tags$script(HTML("
-        // 这里可以添加自定义JavaScript代码
-        console.log('科研项目管理系统已加载');
-      "))
+    // 全局项目操作按钮处理函数
+    function handleViewProject(projectId) {
+      Shiny.setInputValue('view_project', projectId, {priority: 'event'});
+    }
+    
+    function handleEditProject(projectId) {
+      Shiny.setInputValue('edit_project', projectId, {priority: 'event'});
+    }
+    
+    function handleManageAttachments(projectId) {
+      Shiny.setInputValue('manage_attachments', projectId, {priority: 'event'});
+    }
+    
+    function handleDeleteProject(projectId) {
+      Shiny.setInputValue('delete_project', projectId, {priority: 'event'});
+    }
+    
+    // 文档管理相关函数
+    function previewDocument(documentId) {
+      Shiny.setInputValue('preview_document', documentId, {priority: 'event'});
+    }
+    
+    function downloadDocument(documentId) {
+      Shiny.setInputValue('download_document', documentId, {priority: 'event'});
+    }
+    
+    function deleteDocument(documentId) {
+      if (confirm('确定要删除这个文档吗？此操作不可撤销。')) {
+        Shiny.setInputValue('delete_document', documentId, {priority: 'event'});
+      }
+    }
+    
+    // 项目表格按钮点击处理
+    $(document).ready(function() {
+      // 使用事件委托处理动态生成的按钮
+      $(document).on('click', '.project-view-btn', function() {
+        var projectId = $(this).data('project-id');
+        if (projectId) {
+          Shiny.setInputValue('view_project', projectId, {priority: 'event'});
+        }
+      });
+      
+      $(document).on('click', '.project-edit-btn', function() {
+        var projectId = $(this).data('project-id');
+        if (projectId) {
+          Shiny.setInputValue('edit_project', projectId, {priority: 'event'});
+        }
+      });
+      
+      $(document).on('click', '.project-attach-btn', function() {
+        var projectId = $(this).data('project-id');
+        if (projectId) {
+          Shiny.setInputValue('manage_attachments', projectId, {priority: 'event'});
+        }
+      });
+      
+      $(document).on('click', '.project-delete-btn', function() {
+        var projectId = $(this).data('project-id');
+        if (projectId) {
+          Shiny.setInputValue('delete_project', projectId, {priority: 'event'});
+        }
+      });
+      
+      // 文件上传区域美化
+      $('.shiny-file-input').on('dragover', function(e) {
+        e.preventDefault();
+        $(this).css('border-color', '#3498db');
+      });
+      
+      $('.shiny-file-input').on('dragleave', function(e) {
+        e.preventDefault();
+        $(this).css('border-color', '#ccc');
+      });
+      
+      $('.shiny-file-input').on('drop', function(e) {
+        e.preventDefault();
+        $(this).css('border-color', '#2ecc71');
+      });
+    });
+  ")),
+      tags$script(HTML("
+    // 文件拖放功能
+    $(document).ready(function() {
+      // 为所有上传区域添加拖放支持
+      function initDropZone(dropZoneId, fileInputId) {
+        var dropZone = $('#' + dropZoneId);
+        var fileInput = $('#' + fileInputId);
+        
+        if (dropZone.length && fileInput.length) {
+          dropZone.on('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).addClass('dragover');
+          });
+          
+          dropZone.on('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).removeClass('dragover');
+          });
+          
+          dropZone.on('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            $(this).removeClass('dragover');
+            
+            var files = e.originalEvent.dataTransfer.files;
+            if (files.length > 0) {
+              // 触发文件输入
+              fileInput[0].files = files;
+              fileInput.trigger('change');
+            }
+          });
+          
+          // 点击区域触发文件选择
+          dropZone.on('click', function(e) {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+              fileInput.trigger('click');
+            }
+          });
+        }
+      }
+      
+      // 初始化所有上传区域
+      initDropZone('drop_zone', 'quick_file_input');
+      
+      // 监听Shiny页面变化，重新初始化
+      $(document).on('shiny:connected', function() {
+        setTimeout(function() {
+          initDropZone('drop_zone', 'quick_file_input');
+        }, 500);
+      });
+    });
+  "))
     ),
     
     # 标签页内容
@@ -169,10 +320,10 @@ ui <- dashboardPage(
                     
                     h4("快速开始："),
                     tags$ol(
-                      tags$li("点击左侧"仪表板"查看项目总览"),
-                      tags$li("点击"项目管理"创建或管理项目"),
+                      tags$li('点击左侧"仪表板"查看项目总览'),
+                      tags$li('点击"项目管理"创建或管理项目'),
                       tags$li("使用筛选功能快速查找项目"),
-                      tags$li("在"报告生成"页面生成分析报告")
+                      tags$li('在"报告生成"页面生成分析报告')
                     ),
                     
                     h4("技术支持："),

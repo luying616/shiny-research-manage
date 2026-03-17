@@ -703,5 +703,64 @@ textarea.form-control {
   background-color: #dc3545;
   color: white;
 }
+/* 项目操作按钮样式优化 */
+.action-buttons {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  flex-wrap: nowrap;
+}
+
+.action-buttons .btn-sm {
+  padding: 3px 8px;
+  font-size: 12px;
+  min-width: 30px;
+}
+
+/* 快速上传区域样式 */
+.upload-area {
+  border: 3px dashed #ccc;
+  border-radius: 10px;
+  padding: 30px;
+  text-align: center;
+  background-color: #fafafa;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-area:hover {
+  border-color: #3498db;
+  background-color: #f0f8ff;
+  transform: translateY(-2px);
+}
+
+.upload-area.dragover {
+  border-color: #2ecc71;
+  background-color: #e8f6f3;
+}
+
+/* 快速操作按钮组 */
+.well .btn {
+  margin: 2px;
+  min-width: 120px;
+}
+
+/* 文档管理标签页优化 */
+.nav-tabs>li>a {
+  font-weight: bold;
+}
+
+.nav-tabs>li.active>a {
+  background-color: #f8f9fa;
+  border-bottom-color: #f8f9fa;
+}
+
+/* 附件统计信息 */
+#attachment_stats, #document_stats, #activity_stats {
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+  border-left: 4px solid #667eea;
+}
 
 /* ==================== 结束 ==================== */

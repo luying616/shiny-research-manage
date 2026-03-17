@@ -253,3 +253,218 @@ verify_password <- function(password, hash) {
 }
 
 log_info("全局配置加载完成")
+
+
+# ==================== 全局配置 ====================
+# 提供项目类型和状态的映射到 ID 的函数
+
+# 静态映射：项目类型
+match_project_type_id <- function(type_name) {
+  PROJECT_TYPES <- c(
+    "基础研究" = 1,
+    "应用研究" = 2,
+    "数据项目" = 3,
+    "资源项目" = 4,
+    "临床研究" = 5
+  )
+  
+  type_id <- PROJECT_TYPES[type_name]
+  
+  if (is.na(type_id)) {
+    stop(sprintf("未知的项目类型：'%s'", type_name))
+  }
+  
+  return(type_id)
+}
+
+# 静态映射：项目状态
+match_status_id <- function(status_name) {
+  PROJECT_STATUSES <- c(
+    "规划中" = 1,
+    "进行中" = 2,
+    "已暂停" = 3,
+    "已完成" = 4,
+    "已取消" = 5
+  )
+  
+  status_id <- PROJECT_STATUSES[status_name]
+  
+  if (is.na(status_id)) {
+    stop(sprintf("未知的项目状态：'%s'", status_name))
+  }
+  
+  return(status_id)
+}
+
+# 回退动态方式（根据需要从数据库中动态读取，适合频繁更新状态或项目类型）
+# 动态查询项目类型 ID
+fetch_projects_from_db <- function(db_pool, query) {
+  tryCatch({
+    dbGetQuery(db_pool, query)
+  }, error = function(e) {
+    log_error(sprintf("查询数据库失败: %s", e$message))
+    NULL
+  })
+}
+
+# 动态查询项目类型到 ID 的映射
+match_project_type_id_from_db <- function(type_name, db_pool) {
+  query <- "SELECT type_name, type_id FROM projects.project_types"
+  project_types <- fetch_projects_from_db(db_pool, query)
+  
+  if (is.null(project_types)) {
+    stop("无法从数据库加载项目类型数据")
+  }
+  
+  type_id <- project_types$type_id[project_types$type_name == type_name]
+  
+  if (length(type_id) == 0) {
+    stop(sprintf("未知的项目类型：'%s'", type_name))
+  }
+  
+  return(type_id)
+}
+
+# 动态查询项目状态到 ID 的映射
+match_status_id_from_db <- function(status_name, db_pool) {
+  query <- "SELECT status_name, status_id FROM projects.project_statuses"
+  statuses <- fetch_projects_from_db(db_pool, query)
+  
+  if (is.null(statuses)) {
+    stop("无法从数据库加载项目状态数据")
+  }
+  
+  status_id <- statuses$status_id[statuses$status_name == status_name]
+  
+  if (length(status_id) == 0) {
+    stop(sprintf("未知的项目状态：'%s'", status_name))
+  }
+  
+  return(status_id)
+}
+
+# 附件相关配置
+NFS_BASE_PATH <- "/mnt/nfs/project_documents"  # NFS挂载点
+LOCAL_TEMP_PATH <- "/tmp/project_uploads"  # 本地临时目录
+MAX_FILE_SIZE <- 50 * 1024 * 1024  # 50MB最大文件大小
+
+# 文档类型分类
+DOCUMENT_TYPES <- c(
+  "research_proposal" = "研究方案",
+  "ethics_approval" = "伦理批件",
+  "contract" = "合同",
+  "protocol" = "试验方案",
+  "report" = "报告",
+  "publication" = "发表论文",
+  "presentation" = "演示文稿",
+  "data_file" = "数据文件",
+  "analysis" = "分析结果",
+  "other" = "其他文档"
+)
+
+# 允许的文件类型扩展
+ALLOWED_FILE_TYPES <- list(
+  pdf = c("application/pdf"),
+  doc = c("application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"),
+  xls = c("application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"),
+  ppt = c("application/vnd.ms-powerpoint", "application/vnd.openxmlformats-officedocument.presentationml.presentation"),
+  image = c("image/jpeg", "image/png", "image/gif", "image/bmp", "image/tiff"),
+  text = c("text/plain", "text/csv"),
+  zip = c("application/zip", "application/x-rar-compressed", "application/x-7z-compressed"),
+  data = c("application/json", "application/xml")
+)
+
+# 预算类别
+BUDGET_CATEGORIES <- c(
+  "personnel" = "人员费用",
+  "equipment" = "设备购置",
+  "consumables" = "实验耗材",
+  "travel" = "差旅会议",
+  "publication" = "论文发表",
+  "other" = "其他费用"
+)
+
+# 创建必要的目录
+dir.create(LOCAL_TEMP_PATH, showWarnings = FALSE, recursive = TRUE)
+dir.create(NFS_BASE_PATH, showWarnings = FALSE, recursive = TRUE)
+
+# 附件相关函数
+format_file_size <- function(bytes) {
+  if (is.na(bytes) || bytes <= 0) return("0 B")
+  
+  units <- c("B", "KB", "MB", "GB", "TB")
+  for (i in 1:5) {
+    if (bytes < 1024^i) {
+      value <- bytes / 1024^(i-1)
+      if (value < 10) {
+        return(sprintf("%.1f %s", value, units[i]))
+      } else {
+        return(sprintf("%.0f %s", round(value), units[i]))
+      }
+    }
+  }
+  return(sprintf("%.1f TB", bytes/1024^4))
+}
+
+# 生成安全的文件名
+generate_safe_filename <- function(original_filename) {
+  timestamp <- format(Sys.time(), "%Y%m%d_%H%M%S")
+  random_str <- paste0(sample(c(letters, 0:9), 6), collapse = "")
+  extension <- tolower(tools::file_ext(original_filename))
+  name_without_ext <- tools::file_path_sans_ext(basename(original_filename))
+  
+  # 清理文件名
+  safe_name <- gsub("[^a-zA-Z0-9\u4e00-\u9fa5_-]", "_", name_without_ext)
+  safe_name <- gsub("_{2,}", "_", safe_name)  # 移除连续下划线
+  safe_name <- substr(safe_name, 1, 100)  # 限制长度
+  
+  if (safe_name == "") {
+    safe_name <- "file"
+  }
+  
+  return(paste0(safe_name, "_", timestamp, "_", random_str, ".", extension))
+}
+
+# 获取文件图标类型
+get_file_icon <- function(filename) {
+  ext <- tolower(tools::file_ext(filename))
+  
+  switch(ext,
+         pdf = "file-pdf",
+         doc = "file-word",
+         docx = "file-word",
+         xls = "file-excel",
+         xlsx = "file-excel",
+         ppt = "file-powerpoint",
+         pptx = "file-powerpoint",
+         jpg = "file-image",
+         jpeg = "file-image",
+         png = "file-image",
+         gif = "file-image",
+         zip = "file-archive",
+         rar = "file-archive",
+         txt = "file-alt",
+         csv = "file-csv",
+         "file"
+  )
+}
+
+# 获取文件类型颜色
+get_file_color <- function(filename) {
+  ext <- tolower(tools::file_ext(filename))
+  
+  switch(ext,
+         pdf = "danger",
+         doc = "primary",
+         docx = "primary",
+         xls = "success",
+         xlsx = "success",
+         ppt = "warning",
+         pptx = "warning",
+         jpg = "info",
+         jpeg = "info",
+         png = "info",
+         gif = "info",
+         "secondary"
+  )
+}
